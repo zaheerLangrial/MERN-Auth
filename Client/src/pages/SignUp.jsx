@@ -1,11 +1,12 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 
 function SignUp() {
   const [formData , setFormData] = useState({})
   const [err , setErr] = useState(false) ;
   const [loading , setLoading] = useState(false)
+  const navigate = useNavigate()
   const handleChange = (e) => {
     setFormData({...formData , [e.target.id] : e.target.value})
   }
@@ -16,6 +17,7 @@ function SignUp() {
       setErr(false)
       const res = await axios.post('http://localhost:3000/api/auth/signup' , formData)
       setLoading(false)
+      navigate('sign-in')
     } catch (error) {
       setLoading(false)
       setErr(true)
@@ -34,7 +36,7 @@ function SignUp() {
       </form>
       <div className='flex gap-2 mt-5'>
         <p>Have an account?</p>
-        <Link to={'/signin'}>
+        <Link to={'/sign-in'}>
           <span className=' text-blue-500'>Sign in</span>
         </Link>
       </div>
