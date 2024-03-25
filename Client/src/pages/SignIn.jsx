@@ -1,29 +1,30 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import {Link, useNavigate} from 'react-router-dom'
+import {useDispatch, useSelector} from 'react-redux'
+import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice'
 
 function SingIn() {
   const [formData , setFormData] = useState({})
-  const [err , setErr] = useState(false) ;
-  const [loading , setLoading] = useState(false)
+
+  const {loading , error } = useSelector((state) => state.user)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const handleChange = (e) => {
     setFormData({...formData , [e.target.id] : e.target.value})
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true)
-      setErr(false)
+      dispatch(signInStart())
+      dispatch(signInFailure(false))
       const res = await axios.post('http://localhost:3000/api/auth/signin' , formData)
-      setLoading(false)
+      dispatch(signInSuccess(res.data))
       navigate('/')
     } catch (error) {
-      setLoading(false)
-      setErr(true)
-    }
+        dispatch(signInFailure(error.response.data))
+      }
   }
-  console.log(formData)
   return (
     <div className='max-w-lg mx-auto p-3'>
       <h1 className=' text-3xl text-center font-semibold my-7'>
@@ -42,7 +43,7 @@ function SingIn() {
       </div>
       <div>
         <p className=' text-red-700 mt-5'>
-          {err && 'Something wents wrong...'}
+          {error ? error.message || 'Something wents wrong...' : ''}
         </p>
       </div>
     </div>
