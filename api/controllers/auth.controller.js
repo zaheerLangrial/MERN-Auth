@@ -30,3 +30,19 @@ export const signin = async (req , res , next) => {
         next(error , "Yaha ha error")
     }
 }
+
+export const google = async (req , res , next) => {
+    try {
+        const user = await User.findOne({email : req.body.email})
+        if(user) {
+            const token = jwt.sign({id: user._id} , process.env.JWT_SECRET);
+            const {password : hashPassword , ...rest} = user._doc;
+            const expairyDate = new Date(Date.now() + 3600000);
+            res.cookie('access token' , token , {httpOnly : true , expires : expairyDate})
+        } else {
+            
+        }
+    } catch (error) {
+        
+    }
+}
