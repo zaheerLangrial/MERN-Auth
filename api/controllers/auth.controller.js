@@ -38,11 +38,21 @@ export const google = async (req , res , next) => {
             const token = jwt.sign({id: user._id} , process.env.JWT_SECRET);
             const {password : hashPassword , ...rest} = user._doc;
             const expairyDate = new Date(Date.now() + 3600000);
-            res.cookie('access token' , token , {httpOnly : true , expires : expairyDate})
+            res.cookie('access token' , token , {httpOnly : true , expires : expairyDate}).status(200).json(rest)
         } else {
-            
+            const genratedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const hashedPassword = bcryptjs.hashSync(genratedPassword , 10);
+            const newUser = new User({username : req.body.name.split(' ').join('').toLowerCase() + Math.floor(Math.random() * 10000) , email : req.body.email , password : hashedPassword , profilePicture : req.body.photo });
+            await newUser.save();
+            const token = jwt.sign({id : newUser._id} , process.env.JWT_SECRET) ;
+            const {password : hashedPassword2 , ...rest} = newUser._doc;
+            const expairyDate = Date(Date.now() + 3600000);
+            res.cookie('access token' , token , {
+                httpOnly : true,
+                expires : expairyDate,
+            }).status(200).json(rest)
         }
     } catch (error) {
-        
+        console.log(error)
     }
 }
