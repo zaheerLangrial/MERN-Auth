@@ -47,7 +47,7 @@ function Profile() {
       request.resource.contentType.matches('image/.*') */}
         <input type="file" ref={fileRef} hidden accept="image/*" onChange={(e) => setImg(e.target.files)} />
         <img
-          src={currentUser.profilePicture}
+          src={formData.profilePicture || currentUser.profilePicture}
           alt="Profile Picture"
           className="h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2"
           onClick={() => fileRef.current.click()}
