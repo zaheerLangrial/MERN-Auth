@@ -22,7 +22,7 @@ export const updateUser = async (req , res , next) => {
             req.body.password = bcryptjs.hashSync(req.body.password , 10)
         }
         const updatedUser = await User.findByIdAndUpdate(
-            req.body.id, 
+            req.params.id, 
             {
                 $set : {
                     username : req.body.username,
@@ -33,8 +33,13 @@ export const updateUser = async (req , res , next) => {
             },
             {new : true},
         )
-        const {password , ...rest } = updatedUser._doc
-        res.status(200).json()
+     // Log the updated user
+        if (!updatedUser) {
+            // If updatedUser is null, handle the error accordingly
+            return next(errorHandler(404, 'User not found'));
+        }
+        const { password, ...rest } = updatedUser._doc;
+        res.status(200).json(rest);
     } catch (error) {
         next(error)
     }
