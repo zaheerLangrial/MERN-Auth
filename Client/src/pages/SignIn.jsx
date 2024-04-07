@@ -20,6 +20,7 @@ function SingIn() {
       dispatch(signInStart())
       dispatch(signInFailure(false))
       const res = await axios.post('http://localhost:3000/api/auth/signin' , formData)
+      console.log(res)
       dispatch(signInSuccess(res.data))
       navigate('/')
     } catch (error) {

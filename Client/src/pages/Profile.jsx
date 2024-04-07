@@ -14,6 +14,12 @@ function Profile() {
   const [formData , setFormData] = useState({})
   const dispatch = useDispatch()
   const {updateSuccess , setUpdateSuccess} = useState(false)
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MTExYTEzYmEyN2RjYmM2NjNmYjdmNCIsImlhdCI6MTcxMjM5OTU5OH0.D0v4NVAUVX33Bj9dn_CLnMWMw_xd_sPI_OWS6bekgtQ'
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
   useEffect(() => {
     if(img) {
       handleFileUpload(img);
@@ -48,15 +54,10 @@ function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart())
-      const res = await fetch(`http://localhost:3000/api/user/update/${currentUser._id}` , {
-        method : 'POST',
-        headers : {
-          'Content-Type' : 'application/json',
-        },
-        body: JSON.stringify(formData)
+      const res = await axios.post(`http://localhost:3000/api/user/update/${currentUser._id}` , formData , {
+        headers : headers
       });
-      const data = await res.json();
-      if(data.success === false) {
+      if(res.success === false) {
         dispatch(updateUserFailure(data.message))
         return;
       }
